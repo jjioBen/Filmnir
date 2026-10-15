@@ -3,678 +3,1868 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filmnir - Live Sports & Movies / المنصة السينمائية والبث المباشر</title>
+    <title>Filmnir — Live Sports & Movies | المنصة السينمائية والبث المباشر</title>
     <meta name="description" content="تطبيق Filmnir لمشاهدة وتنزيل أحدث الأفلام، المسلسلات، والقنوات الرياضية المباشرة مجاناً وبدون إعلانات. Watch & Download Movies, TV Shows, and Live Sports Channels for Free.">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <meta name="theme-color" content="#000000">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Filmnir — Live Sports & Movies">
+    <meta property="og:description" content="أحدث الأفلام والمسلسلات والبث المباشر مجاناً وبدون إعلانات.">
+    <meta property="og:image" content="000cf250b13c26cd90f3ba3845f8304c.png">
+    <meta property="og:type" content="website">
+
+    <!-- Preconnect + Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="000cf250b13c26cd90f3ba3845f8304c.png">
 
     <style>
+        /* ============================================================
+           DESIGN TOKENS
+        ============================================================ */
         :root {
-            --amoled-black: #000000;
-            --primary-neon: #FF0033;
-            --primary-glow: rgba(255, 0, 51, 0.6);
-            --cyan-neon: #00F0FF;
-            --cyan-glow: rgba(0, 240, 255, 0.5);
-            --gold-neon: #FFD700;
-            
-            --glass-bg: rgba(18, 18, 24, 0.55);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-highlight: rgba(255, 255, 255, 0.25);
-            
-            --text-main: #FFFFFF;
-            --text-sub: #B0B0C0;
-            --telegram-color: #0088CC;
+            --black: #000000;
+            --surface: #08080c;
+            --surface-2: #0d0d14;
+
+            --red: #FF1E45;
+            --red-deep: #C4002B;
+            --red-glow: rgba(255, 30, 69, 0.55);
+
+            --cyan: #00F0FF;
+            --cyan-glow: rgba(0, 240, 255, 0.45);
+
+            --gold: #FFD700;
+
+            --glass: rgba(255, 255, 255, 0.035);
+            --glass-strong: rgba(18, 18, 26, 0.6);
+            --stroke: rgba(255, 255, 255, 0.09);
+            --stroke-hi: rgba(255, 255, 255, 0.22);
+
+            --txt: #FFFFFF;
+            --txt-2: #A7A7B8;
+            --txt-3: #6E6E80;
+
+            --tg: #0088CC;
+
+            --r-sm: 14px;
+            --r-md: 20px;
+            --r-lg: 28px;
+            --r-xl: 36px;
+
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            --nav-h: 76px;
         }
 
-        * {
-            box-sizing: border-box;
+        /* ============================================================
+           RESET
+        ============================================================ */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
-            font-family: 'Tajawal', 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        html {
             scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
-            background-color: var(--amoled-black);
-            color: var(--text-main);
-            line-height: 1.6;
+            font-family: 'Tajawal', 'Poppins', system-ui, sans-serif;
+            background: var(--black);
+            color: var(--txt);
+            line-height: 1.7;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% -10%, rgba(255, 0, 51, 0.25) 0%, transparent 60%),
-                radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.12) 0%, transparent 50%);
-            background-attachment: fixed;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Navigation Bar */
-        nav {
+        img { max-width: 100%; display: block; }
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+        ul { list-style: none; }
+
+        ::selection { background: var(--red); color: #fff; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #050508; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--red), var(--red-deep));
+            border-radius: 20px;
+            border: 2px solid #050508;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        /* ============================================================
+           AMBIENT BACKGROUND
+        ============================================================ */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+            background: var(--black);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.5;
+            will-change: transform;
+        }
+
+        .blob-1 {
+            width: 620px; height: 620px;
+            background: radial-gradient(circle, rgba(255,30,69,.55), transparent 68%);
+            top: -240px; right: -120px;
+            animation: drift1 22s ease-in-out infinite alternate;
+        }
+        .blob-2 {
+            width: 560px; height: 560px;
+            background: radial-gradient(circle, rgba(0,240,255,.35), transparent 68%);
+            bottom: -200px; left: -160px;
+            animation: drift2 26s ease-in-out infinite alternate;
+        }
+        .blob-3 {
+            width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(160,0,255,.28), transparent 70%);
+            top: 45%; left: 45%;
+            animation: drift3 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift1 { to { transform: translate3d(-90px, 110px, 0) scale(1.15); } }
+        @keyframes drift2 { to { transform: translate3d(120px, -90px, 0) scale(1.2); } }
+        @keyframes drift3 { to { transform: translate3d(-140px, -70px, 0) scale(0.85); } }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+            background-size: 64px 64px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 78%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 78%);
+        }
+
+        /* Scroll progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0; right: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyan), var(--red));
+            z-index: 9999;
+            box-shadow: 0 0 14px var(--red-glow);
+            transition: width .1s linear;
+        }
+
+        /* ============================================================
+           NAVBAR
+        ============================================================ */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-h);
+            z-index: 1000;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 18px 8%;
-            background: rgba(0, 0, 0, 0.65);
+            justify-content: space-between;
+            padding: 0 clamp(16px, 5vw, 64px);
+            background: rgba(0, 0, 0, 0.35);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid transparent;
+            transition: height .35s var(--ease), background .35s var(--ease), border-color .35s var(--ease);
+        }
+
+        .nav.scrolled {
+            height: 64px;
+            background: rgba(0, 0, 0, 0.78);
+            border-bottom-color: var(--stroke);
         }
 
         .nav-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            text-decoration: none;
-            color: #fff;
+            flex-shrink: 0;
         }
 
         .nav-logo {
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,30,69,.4);
+            box-shadow: 0 0 18px var(--red-glow);
+            transition: transform .4s var(--ease-bounce), box-shadow .4s var(--ease);
+        }
+
+        .nav-brand:hover .nav-logo {
+            transform: rotate(-8deg) scale(1.08);
+            box-shadow: 0 0 30px var(--red);
         }
 
         .nav-title {
-            font-size: 1.6rem;
+            font-size: 1.45rem;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: .5px;
+            line-height: 1;
         }
-
         .nav-title span {
-            color: var(--primary-neon);
-            text-shadow: 0 0 12px var(--primary-glow);
+            color: var(--red);
+            text-shadow: 0 0 16px var(--red-glow);
         }
 
-        .tg-link-nav {
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-menu a {
+            position: relative;
+            padding: 9px 16px;
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--txt-2);
+            border-radius: 999px;
+            transition: color .3s var(--ease), background .3s var(--ease);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 3px; left: 50%;
+            width: 0; height: 2px;
+            background: var(--red);
+            border-radius: 2px;
+            transform: translateX(-50%);
+            transition: width .35s var(--ease);
+            box-shadow: 0 0 10px var(--red-glow);
+        }
+
+        .nav-menu a:hover { color: #fff; background: rgba(255,255,255,.045); }
+        .nav-menu a:hover::after { width: 22px; }
+
+        .nav-cta {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(0, 240, 255, 0.08);
-            color: var(--cyan-neon);
+            gap: 9px;
             padding: 10px 22px;
-            border-radius: 30px;
-            text-decoration: none;
+            border-radius: 999px;
+            font-size: .92rem;
             font-weight: 700;
-            font-size: 0.95rem;
-            border: 1px solid rgba(0, 240, 255, 0.25);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--cyan);
+            background: rgba(0, 240, 255, 0.07);
+            border: 1px solid rgba(0, 240, 255, 0.28);
+            transition: all .35s var(--ease);
+            white-space: nowrap;
         }
 
-        .tg-link-nav:hover {
-            background: rgba(0, 240, 255, 0.25);
+        .nav-cta i { font-size: 1.05rem; }
+
+        .nav-cta:hover {
+            background: rgba(0, 240, 255, 0.18);
             color: #fff;
-            box-shadow: 0 0 25px var(--cyan-glow);
+            border-color: var(--cyan);
+            box-shadow: 0 0 26px var(--cyan-glow);
             transform: translateY(-2px);
         }
 
-        /* Hero Section */
-        header.hero {
-            padding: 80px 20px 40px;
-            text-align: center;
-            max-width: 900px;
+        /* Mobile nav toggle */
+        .nav-toggle {
+            display: none;
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.04);
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        /* ============================================================
+           HERO
+        ============================================================ */
+        .hero {
+            position: relative;
+            padding: calc(var(--nav-h) + 60px) clamp(16px, 5vw, 64px) 60px;
+            max-width: 1320px;
             margin: 0 auto;
         }
 
-        .main-logo {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            margin-bottom: 25px;
-            box-shadow: 0 0 45px var(--primary-glow);
-            animation: pulseGlow 3s ease-in-out infinite alternate;
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: clamp(30px, 5vw, 70px);
+            align-items: center;
         }
 
-        @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 35px var(--primary-glow); }
-            100% { transform: scale(1.05); box-shadow: 0 0 60px var(--primary-neon), 0 0 20px var(--cyan-neon); }
+        .hero-content { text-align: right; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255, 30, 69, 0.09);
+            border: 1px solid rgba(255, 30, 69, 0.3);
+            font-size: .84rem;
+            font-weight: 700;
+            color: #FF7A93;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 10px var(--red);
+            animation: blink 1.6s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .35; transform: scale(.75); }
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2.6rem, 6.4vw, 4.6rem);
             font-weight: 900;
-            margin-bottom: 15px;
-            line-height: 1.1;
-            color: var(--text-main);
+            line-height: 1.02;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
         }
 
-        .hero h1 span {
-            color: var(--primary-neon);
-            text-shadow: 0 0 30px var(--primary-glow);
+        .hero h1 .brand {
+            display: inline-block;
+            background: linear-gradient(120deg, #fff 10%, var(--red) 45%, #ff7a93 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 22px rgba(255,30,69,.45));
         }
 
-        /* العبارة الترويجية */
-        .promo-banner-glass {
-            background: rgba(255, 0, 51, 0.08);
-            border: 1px solid rgba(255, 0, 51, 0.3);
-            backdrop-filter: blur(12px);
-            padding: 20px 25px;
-            border-radius: 20px;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        .hero-sub {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(.85rem, 1.7vw, 1.05rem);
+            font-weight: 600;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            color: var(--txt-3);
+            margin-bottom: 24px;
         }
 
-        .promo-banner-glass p.ar {
-            font-size: 1.25rem;
-            color: #FFFFFF;
-            font-weight: 700;
-            margin-bottom: 6px;
+        .hero-desc {
+            font-size: clamp(1rem, 1.6vw, 1.16rem);
+            color: #D6D6E2;
+            max-width: 560px;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
 
-        .promo-banner-glass p.en {
-            font-size: 0.95rem;
-            color: var(--text-sub);
+        .hero-desc-en {
             font-family: 'Poppins', sans-serif;
             direction: ltr;
+            text-align: left;
+            font-size: .9rem;
+            color: var(--txt-3);
+            max-width: 560px;
+            margin-bottom: 32px;
+            line-height: 1.6;
         }
 
+        /* Buttons */
         .btn-group {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            gap: 14px;
             flex-wrap: wrap;
-            margin-bottom: 30px;
+            margin-bottom: 34px;
         }
 
-        .glass-btn {
+        .btn {
+            position: relative;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            padding: 18px 36px;
-            border-radius: 50px;
+            gap: 11px;
+            padding: 16px 32px;
+            border-radius: 999px;
+            font-size: 1rem;
             font-weight: 800;
-            font-size: 1.15rem;
-            text-decoration: none;
-            position: relative;
             overflow: hidden;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+            isolation: isolate;
+            transition: transform .4s var(--ease-bounce), box-shadow .4s var(--ease), background .4s var(--ease), border-color .4s var(--ease);
+            white-space: nowrap;
         }
 
-        .btn-neon-red {
-            background: linear-gradient(135deg, rgba(255, 0, 51, 0.35), rgba(150, 0, 30, 0.2));
-            color: #FFF;
-            border: 1px solid rgba(255, 0, 51, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(255, 0, 51, 0.3), inset 0 1px 1px var(--glass-highlight);
-        }
+        .btn i { font-size: 1.08rem; position: relative; z-index: 2; }
+        .btn span { position: relative; z-index: 2; }
 
-        .btn-neon-red:hover {
-            background: linear-gradient(135deg, rgba(255, 0, 51, 0.7), rgba(200, 0, 40, 0.5));
-            box-shadow: 0 12px 45px 0 var(--primary-glow), inset 0 1px 2px #fff;
-            transform: translateY(-4px) scale(1.03);
-        }
-
-        .btn-neon-cyan {
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(0, 100, 150, 0.15));
-            color: #FFF;
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.2), inset 0 1px 1px var(--glass-highlight);
-        }
-
-        .btn-neon-cyan:hover {
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.55), rgba(0, 150, 200, 0.35));
-            box-shadow: 0 12px 45px 0 var(--cyan-glow), inset 0 1px 2px #fff;
-            transform: translateY(-4px) scale(1.03);
-        }
-
-        /* Single Frame Slider Section */
-        .slider-section {
-            max-width: 380px;
-            margin: 50px auto 30px;
-            padding: 0 15px;
-            text-align: center;
-        }
-
-        .single-frame-container {
-            position: relative;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 12px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.15);
-        }
-
-        .slide-frame {
-            width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 9/18;
-            background: #000;
-        }
-
-        .slide-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .slide-frame img.active {
-            display: block;
-        }
-
-        /* Slider Controls */
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
-            background: rgba(0, 0, 0, 0.75);
-            color: #fff;
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .slider-btn:hover {
-            background: var(--primary-neon);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .slider-btn.prev { right: -18px; }
-        .slider-btn.next { left: -18px; }
-
-        .slider-caption {
-            margin-top: 20px;
-        }
-
-        .slider-caption p.ar {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #FFF;
-        }
-
-        .slider-caption p.en {
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            font-family: 'Poppins', sans-serif;
-            direction: ltr;
-        }
-
-        /* Features Section */
-        .features-container {
-            max-width: 1150px;
-            margin: 50px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-            gap: 25px;
-        }
-
-        .glass-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(16px) saturate(150%);
-            -webkit-backdrop-filter: blur(16px) saturate(150%);
-            padding: 35px 25px;
-            border-radius: 24px;
-            text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .glass-card::before {
+        /* shine sweep */
+        .btn::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient(135deg, var(--glass-highlight), transparent);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
+            inset: 0;
+            background: linear-gradient(115deg, transparent 32%, rgba(255,255,255,.4) 50%, transparent 68%);
+            transform: translateX(-130%);
+            transition: transform .85s var(--ease);
+            z-index: 1;
+        }
+        .btn:hover::before { transform: translateX(130%); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red), var(--red-deep));
+            color: #fff;
+            border: 1px solid rgba(255, 100, 130, 0.5);
+            box-shadow: 0 10px 34px rgba(255, 30, 69, 0.35), inset 0 1px 0 rgba(255,255,255,.28);
+        }
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.025);
+            box-shadow: 0 18px 50px rgba(255, 30, 69, 0.6), inset 0 1px 0 rgba(255,255,255,.35);
+        }
+
+        .btn-ghost {
+            background: rgba(255,255,255,.045);
+            color: #fff;
+            border: 1px solid var(--stroke-hi);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .btn-ghost:hover {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            transform: translateY(-4px) scale(1.025);
+            box-shadow: 0 18px 46px rgba(0, 240, 255, 0.3);
+        }
+        .btn-ghost:hover i { color: var(--cyan); }
+
+        /* Chips */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 15px;
+            border-radius: 999px;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--txt-2);
+            background: rgba(255,255,255,.035);
+            border: 1px solid var(--stroke);
+            backdrop-filter: blur(8px);
+            transition: all .3s var(--ease);
+        }
+
+        .chip i { font-size: .78rem; color: var(--cyan); }
+        .chip:hover {
+            color: #fff;
+            border-color: rgba(0,240,255,.45);
+            background: rgba(0,240,255,.08);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           PHONE MOCKUP + SLIDER
+        ============================================================ */
+        .phone-stage {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1400px;
+        }
+
+        .phone-halo {
+            position: absolute;
+            width: 118%;
+            height: 118%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,30,69,.28) 0%, rgba(0,240,255,.12) 42%, transparent 70%);
+            filter: blur(48px);
+            animation: haloPulse 6s ease-in-out infinite alternate;
             pointer-events: none;
         }
 
-        .glass-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 0, 51, 0.6);
-            box-shadow: 0 15px 40px rgba(255, 0, 51, 0.25);
+        @keyframes haloPulse {
+            from { opacity: .65; transform: scale(.94); }
+            to   { opacity: 1;   transform: scale(1.06); }
         }
 
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 0, 51, 0.12);
-            color: var(--primary-neon);
+        .phone {
+            position: relative;
+            width: min(310px, 78vw);
+            aspect-ratio: 9 / 18.6;
+            border-radius: 46px;
+            padding: 11px;
+            background: linear-gradient(150deg, #2a2a34, #0a0a0f 45%, #23232c);
+            box-shadow:
+                0 0 0 1.5px rgba(255,255,255,.09),
+                0 40px 90px rgba(0,0,0,.92),
+                0 0 70px rgba(255,30,69,.2);
+            transform: rotateY(-9deg) rotateX(3deg);
+            transition: transform .7s var(--ease);
+            animation: phoneFloat 7s ease-in-out infinite;
+        }
+
+        @keyframes phoneFloat {
+            0%, 100% { translate: 0 0; }
+            50%      { translate: 0 -14px; }
+        }
+
+        .phone-stage:hover .phone {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 22px; left: 50%;
+            transform: translateX(-50%);
+            width: 96px; height: 26px;
+            background: #000;
+            border-radius: 999px;
+            z-index: 20;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+        }
+
+        .phone-notch::after {
+            content: '';
+            position: absolute;
+            right: 15px; top: 50%;
+            transform: translateY(-50%);
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #0f1a22;
+            box-shadow: inset 0 0 4px rgba(0,240,255,.6);
+        }
+
+        .phone-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 36px;
+            overflow: hidden;
+            background: #050508;
+            box-shadow: inset 0 0 40px rgba(0,0,0,.9);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.08);
+            transition: opacity .75s var(--ease), transform 1.2s var(--ease);
+            will-change: opacity, transform;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Screen gradient veil */
+        .phone-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 32%, transparent 88%, rgba(0,0,0,.35) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Slider arrows */
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(10,10,16,.7);
+            border: 1px solid var(--stroke-hi);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 30;
+            opacity: 0;
+            transition: all .4s var(--ease);
+        }
+
+        .phone-stage:hover .slider-nav { opacity: 1; }
+
+        .slider-nav:hover {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 24px var(--red-glow);
+            transform: translateY(-50%) scale(1.12);
+        }
+
+        .slider-nav.prev { right: -14px; }
+        .slider-nav.next { left: -14px; }
+
+        /* Dots */
+        .slider-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(0,0,0,.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.35);
+            transition: all .4s var(--ease);
+        }
+
+        .dot.active {
+            width: 24px;
+            background: var(--red);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        .slider-caption {
+            text-align: center;
+            margin-top: 26px;
+        }
+
+        .slider-caption .ar {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .slider-caption .en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--txt-3);
+        }
+
+        /* ============================================================
+           STATS STRIP
+        ============================================================ */
+        .stats {
+            max-width: 1150px;
+            margin: 80px auto 0;
+            padding: 0 clamp(16px, 5vw, 24px);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--stroke);
+            border: 1px solid var(--stroke);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            backdrop-filter: blur(14px);
+        }
+
+        .stat {
+            background: rgba(8,8,12,.85);
+            padding: 30px 16px;
+            text-align: center;
+            transition: background .4s var(--ease);
+        }
+
+        .stat:hover { background: rgba(255,30,69,.07); }
+
+        .stat-num {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(120deg, #fff, var(--red));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-num sup {
+            font-size: .55em;
+            -webkit-text-fill-color: var(--red);
+            color: var(--red);
+        }
+
+        .stat-label {
+            font-size: .84rem;
+            color: var(--txt-2);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .stat-label-en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .68rem;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--txt-3);
+        }
+
+        /* ============================================================
+           SECTION HEADERS
+        ============================================================ */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 110px clamp(16px, 5vw, 24px) 0;
+        }
+
+        .sec-head {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .sec-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .74rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--red);
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(255,30,69,.08);
+            border: 1px solid rgba(255,30,69,.25);
+            margin-bottom: 18px;
+        }
+
+        .sec-title {
+            font-size: clamp(1.9rem, 4.4vw, 3rem);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            letter-spacing: -.5px;
+        }
+
+        .sec-title em {
+            font-style: normal;
+            background: linear-gradient(120deg, var(--red), #ff8fa3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sec-sub {
+            font-size: 1rem;
+            color: var(--txt-2);
+            max-width: 620px;
+            margin: 0 auto 6px;
+        }
+
+        .sec-sub-en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .84rem;
+            color: var(--txt-3);
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           FEATURES
+        ============================================================ */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+            gap: 22px;
+        }
+
+        .card {
+            position: relative;
+            padding: 38px 26px 34px;
+            border-radius: var(--r-lg);
+            background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+            border: 1px solid var(--stroke);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            overflow: hidden;
+            text-align: center;
+            transition: transform .5s var(--ease), border-color .5s var(--ease), box-shadow .5s var(--ease);
+        }
+
+        /* mouse spotlight */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 0%), rgba(255,30,69,.14), transparent 62%);
+            opacity: 0;
+            transition: opacity .45s var(--ease);
+            pointer-events: none;
+        }
+
+        .card:hover::after { opacity: 1; }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,30,69,.5);
+            box-shadow: 0 26px 55px rgba(0,0,0,.75), 0 0 34px rgba(255,30,69,.16);
+        }
+
+        .card-icon {
+            width: 74px; height: 74px;
+            margin: 0 auto 22px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.85rem;
+            color: var(--red);
+            background: linear-gradient(145deg, rgba(255,30,69,.16), rgba(255,30,69,.04));
+            border: 1px solid rgba(255,30,69,.28);
+            box-shadow: 0 0 26px rgba(255,30,69,.16), inset 0 1px 0 rgba(255,255,255,.12);
+            transition: transform .5s var(--ease-bounce), box-shadow .5s var(--ease), color .4s var(--ease);
+        }
+
+        .card:hover .card-icon {
+            transform: translateY(-5px) rotate(-7deg) scale(1.08);
+            box-shadow: 0 0 42px rgba(255,30,69,.5), inset 0 1px 0 rgba(255,255,255,.2);
+        }
+
+        .card h3 {
+            font-size: 1.22rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+
+        .card .ar {
+            font-size: .95rem;
+            color: #CFCFDC;
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .card .en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .8rem;
+            color: var(--txt-3);
+            line-height: 1.6;
+        }
+
+        /* ============================================================
+           SPORTS BANNER
+        ============================================================ */
+        .sports {
+            position: relative;
+            margin-top: 110px;
+            padding: clamp(42px, 6vw, 72px) clamp(24px, 5vw, 56px);
+            border-radius: var(--r-xl);
+            text-align: center;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse 70% 130% at 50% 0%, rgba(255,30,69,.22), transparent 62%),
+                radial-gradient(ellipse 60% 120% at 100% 100%, rgba(0,240,255,.14), transparent 60%),
+                linear-gradient(160deg, rgba(14,14,20,.92), rgba(6,6,10,.96));
+            border: 1px solid rgba(255,30,69,.32);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 70px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.07);
+        }
+
+        .sports::before {
+            content: '';
+            position: absolute;
+            top: -60%; left: 50%;
+            width: 130%; height: 130%;
+            transform: translateX(-50%);
+            background: conic-gradient(from 180deg, transparent, rgba(255,30,69,.1), transparent 40%);
+            animation: spin 18s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin { to { transform: translateX(-50%) rotate(360deg); } }
+
+        .sports > * { position: relative; z-index: 2; }
+
+        .sports-trophy {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 78px; height: 78px;
+            border-radius: 50%;
+            font-size: 2.1rem;
+            color: var(--gold);
+            background: rgba(255,215,0,.08);
+            border: 1px solid rgba(255,215,0,.35);
+            box-shadow: 0 0 40px rgba(255,215,0,.28);
+            margin-bottom: 22px;
+            animation: trophyPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes trophyPulse {
+            0%, 100% { box-shadow: 0 0 32px rgba(255,215,0,.22); transform: scale(1); }
+            50%      { box-shadow: 0 0 58px rgba(255,215,0,.45); transform: scale(1.06); }
+        }
+
+        .sports h2 {
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 14px;
+            line-height: 1.2;
+        }
+
+        .sports .ar {
+            font-size: clamp(.98rem, 1.7vw, 1.1rem);
+            color: #E0E0EC;
+            max-width: 720px;
+            margin: 0 auto 8px;
+        }
+
+        .sports .en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .88rem;
+            color: var(--txt-3);
+            max-width: 720px;
+            margin: 0 auto 32px;
+        }
+
+        /* ============================================================
+           FAQ
+        ============================================================ */
+        .faq-list {
+            max-width: 820px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            border-radius: var(--r-md);
+            background: rgba(255,255,255,.028);
+            border: 1px solid var(--stroke);
+            backdrop-filter: blur(14px);
+            overflow: hidden;
+            transition: border-color .4s var(--ease), background .4s var(--ease);
+        }
+
+        .faq-item.open {
+            border-color: rgba(255,30,69,.45);
+            background: rgba(255,30,69,.05);
+        }
+
+        .faq-q {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px 24px;
+            font-size: 1.02rem;
+            font-weight: 700;
+            text-align: right;
+            color: #fff;
+        }
+
+        .faq-q i {
+            flex-shrink: 0;
+            width: 30px; height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 2rem;
-            margin: 0 auto 20px;
-            border: 1px solid rgba(255, 0, 51, 0.3);
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.2);
+            font-size: .78rem;
+            color: var(--red);
+            background: rgba(255,30,69,.12);
+            border: 1px solid rgba(255,30,69,.3);
+            transition: transform .45s var(--ease), background .4s var(--ease), color .4s var(--ease);
         }
 
-        .glass-card h3 {
-            font-size: 1.35rem;
-            margin-bottom: 10px;
+        .faq-item.open .faq-q i {
+            transform: rotate(180deg);
+            background: var(--red);
             color: #fff;
+            box-shadow: 0 0 18px var(--red-glow);
         }
 
-        .glass-card .desc-ar {
-            color: #E2E2E8;
-            font-size: 0.98rem;
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .5s var(--ease), padding .5s var(--ease);
+            padding: 0 24px;
+        }
+
+        .faq-item.open .faq-a {
+            max-height: 320px;
+            padding: 0 24px 22px;
+        }
+
+        .faq-a p.ar {
+            font-size: .95rem;
+            color: #C8C8D6;
             margin-bottom: 6px;
         }
 
-        .glass-card .desc-en {
-            color: var(--text-sub);
-            font-size: 0.85rem;
+        .faq-a p.en {
             font-family: 'Poppins', sans-serif;
             direction: ltr;
+            font-size: .8rem;
+            color: var(--txt-3);
         }
 
-        .sports-banner-glass {
-            max-width: 1100px;
-            margin: 70px auto;
-            padding: 50px 30px;
-            background: linear-gradient(135deg, rgba(20, 0, 5, 0.8), rgba(0, 20, 30, 0.8));
-            border-radius: 30px;
-            border: 1px solid rgba(255, 0, 51, 0.4);
-            backdrop-filter: blur(20px);
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-        }
-
-        .sports-banner-glass h2 {
-            font-size: 2.3rem;
-            margin-bottom: 12px;
-            text-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .sports-banner-glass p.ar {
-            font-size: 1.15rem;
-            color: #EEE;
-            max-width: 750px;
-            margin: 0 auto 5px;
-        }
-
-        .sports-banner-glass p.en {
-            font-size: 0.95rem;
-            color: var(--text-sub);
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 30px;
-            direction: ltr;
-        }
-
-        /* Footer */
+        /* ============================================================
+           FOOTER
+        ============================================================ */
         footer {
-            background: #000000;
-            border-top: 1px solid var(--glass-border);
-            padding: 60px 20px 30px;
+            position: relative;
+            margin-top: 120px;
+            padding: 80px clamp(16px, 5vw, 24px) 36px;
+            background: linear-gradient(to bottom, transparent, rgba(255,30,69,.05) 40%, #000 100%);
+            border-top: 1px solid var(--stroke);
+        }
+
+        .footer-inner {
+            max-width: 1150px;
+            margin: 0 auto;
             text-align: center;
-            margin-top: 100px;
+        }
+
+        .footer-logo {
+            width: 68px; height: 68px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            border: 1px solid rgba(255,30,69,.4);
+            box-shadow: 0 0 30px var(--red-glow);
         }
 
         .footer-title {
-            font-size: 1.9rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            font-size: clamp(1.4rem, 3.2vw, 2rem);
+            font-weight: 900;
+            margin-bottom: 8px;
         }
 
         .footer-sub {
-            color: var(--text-sub);
-            font-size: 1rem;
-            margin-bottom: 35px;
+            color: var(--txt-2);
+            font-size: .96rem;
+            margin-bottom: 6px;
+        }
+
+        .footer-sub-en {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .8rem;
+            color: var(--txt-3);
+            margin-bottom: 44px;
         }
 
         .contact-grid {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            max-width: 1050px;
-            margin: 0 auto 35px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+            gap: 18px;
+            margin-bottom: 50px;
         }
 
-        .glass-contact-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            padding: 22px 28px;
-            border-radius: 24px;
-            text-decoration: none;
-            color: #fff;
-            min-width: 270px;
-            flex: 1;
-            max-width: 320px;
-            transition: all 0.4s ease;
+        .contact-card {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 16px;
+            padding: 22px 24px;
+            border-radius: var(--r-md);
+            background: rgba(255,255,255,.03);
+            border: 1px solid var(--stroke);
+            backdrop-filter: blur(14px);
             text-align: right;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            overflow: hidden;
+            transition: all .45s var(--ease);
         }
 
-        .glass-contact-card:hover {
-            background: rgba(0, 240, 255, 0.12);
-            border-color: var(--cyan-neon);
-            box-shadow: 0 10px 30px var(--cyan-glow);
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(0,240,255,.1), transparent 60%);
+            opacity: 0;
+            transition: opacity .45s var(--ease);
+        }
+
+        .contact-card:hover::before { opacity: 1; }
+
+        .contact-card:hover {
             transform: translateY(-6px);
+            border-color: rgba(0,240,255,.5);
+            box-shadow: 0 20px 45px rgba(0,0,0,.7), 0 0 30px rgba(0,240,255,.16);
         }
 
-        .glass-contact-card i {
-            font-size: 2.3rem;
-            color: var(--cyan-neon);
-            text-shadow: 0 0 15px var(--cyan-glow);
+        .contact-card > * { position: relative; z-index: 2; }
+
+        .contact-icon {
+            flex-shrink: 0;
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            color: var(--cyan);
+            background: rgba(0,240,255,.08);
+            border: 1px solid rgba(0,240,255,.25);
+            transition: transform .45s var(--ease-bounce), box-shadow .45s var(--ease);
         }
 
-        .glass-contact-card .card-info h4 {
-            font-size: 1.15rem;
+        .contact-card:hover .contact-icon {
+            transform: scale(1.1) rotate(-6deg);
+            box-shadow: 0 0 26px var(--cyan-glow);
+        }
+
+        .contact-info h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
             margin-bottom: 2px;
         }
 
-        .glass-contact-card .card-info .handle {
+        .contact-info .role {
             font-family: 'Poppins', sans-serif;
-            color: var(--cyan-neon);
+            direction: ltr;
+            font-size: .72rem;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--txt-3);
+            margin-bottom: 4px;
+        }
+
+        .contact-info .handle {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            font-size: .9rem;
             font-weight: 700;
-            font-size: 0.95rem;
-            direction: ltr;
-            text-align: left;
+            color: var(--cyan);
         }
 
-        .glass-contact-card .card-info .sub-lang {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            font-family: 'Poppins', sans-serif;
+        .copyright {
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,.07);
         }
 
-        .copyright-box {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 25px;
-            margin-top: 25px;
+        .copyright .ar {
+            font-size: .88rem;
+            color: #B8B8C6;
+            margin-bottom: 6px;
         }
 
-        .copyright-box p.ar {
-            color: #DDD;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-
-        .copyright-box p.en {
-            color: var(--text-sub);
-            font-size: 0.85rem;
+        .copyright .en {
             font-family: 'Poppins', sans-serif;
             direction: ltr;
+            font-size: .76rem;
+            color: var(--txt-3);
+        }
+
+        .copyright .dev {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 16px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-size: .78rem;
+            color: var(--txt-2);
+            background: rgba(255,255,255,.035);
+            border: 1px solid var(--stroke);
+        }
+
+        .copyright .dev i { color: var(--red); font-size: .72rem; }
+
+        /* ============================================================
+           BACK TO TOP
+        ============================================================ */
+        .to-top {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--red), var(--red-deep));
+            border: 1px solid rgba(255,255,255,.25);
+            box-shadow: 0 10px 30px rgba(255,30,69,.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(.85);
+            transition: all .45s var(--ease);
+            z-index: 900;
+        }
+
+        .to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .to-top:hover {
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 16px 42px rgba(255,30,69,.65);
+        }
+
+        /* ============================================================
+           SCROLL REVEAL
+        ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(34px);
+            transition: opacity .85s var(--ease), transform .85s var(--ease);
+            will-change: opacity, transform;
+        }
+
+        .reveal.in {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 56px;
+                text-align: center;
+            }
+            .hero-content { text-align: center; }
+            .hero-desc, .hero-desc-en { margin-left: auto; margin-right: auto; }
+            .hero-desc-en { text-align: center; }
+            .btn-group, .chips { justify-content: center; }
+            .nav-menu { display: none; }
+            .phone { transform: none; }
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .promo-banner-glass p.ar { font-size: 1.1rem; }
-            .glass-btn { width: 100%; }
-            nav { padding: 15px 5%; }
-            .glass-contact-card { text-align: center; flex-direction: column; }
-            .glass-contact-card .card-info .handle { text-align: center; }
-            .slider-btn.prev { right: -10px; }
-            .slider-btn.next { left: -10px; }
+            :root { --nav-h: 66px; }
+
+            .nav-cta span { display: none; }
+            .nav-cta { padding: 10px 14px; }
+            .nav-cta i { font-size: 1.15rem; }
+
+            .hero { padding-top: calc(var(--nav-h) + 40px); }
+
+            .btn { width: 100%; }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                border-radius: var(--r-md);
+            }
+
+            .slider-nav { opacity: 1; }
+            .slider-nav.prev { right: 6px; }
+            .slider-nav.next { left: 6px; }
+
+            .section { padding-top: 80px; }
+            .sports { margin-top: 80px; }
+
+            .contact-card { flex-direction: column; text-align: center; }
+
+            .to-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }
+        }
+
+        @media (max-width: 420px) {
+            .hero h1 { font-size: 2.3rem; }
+            .card { padding: 30px 20px; }
+            .faq-q { font-size: .94rem; padding: 17px 18px; }
+            .faq-a { padding: 0 18px; }
+            .faq-item.open .faq-a { padding: 0 18px 18px; }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal { opacity: 1; transform: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <nav>
-        <a href="#" class="nav-brand">
-            <img src="000cf250b13c26cd90f3ba3845f8304c.png" alt="Filmnir Logo" class="nav-logo">
+    <!-- Ambient Background -->
+    <div class="bg-layer" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+    <!-- ===================== NAVBAR ===================== -->
+    <nav class="nav" id="nav">
+        <a href="#top" class="nav-brand">
+            <img src="000cf250b13c26cd90f3ba3845f8304c.png" alt="Filmnir Logo" class="nav-logo" width="42" height="42">
             <div class="nav-title">Film<span>nir</span></div>
         </a>
-        <a href="https://t.me/Filmnir" target="_blank" class="tg-link-nav">
-            <i class="fa-brands fa-telegram"></i> القناة الرسمية
+
+        <ul class="nav-menu">
+            <li><a href="#features">المميزات</a></li>
+            <li><a href="#sports">البث المباشر</a></li>
+            <li><a href="#faq">الأسئلة</a></li>
+            <li><a href="#contact">تواصل</a></li>
+        </ul>
+
+        <a href="https://t.me/Filmnir" target="_blank" rel="noopener" class="nav-cta">
+            <i class="fa-brands fa-telegram"></i>
+            <span>القناة الرسمية</span>
         </a>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <img src="000cf250b13c26cd90f3ba3845f8304c.png" alt="Filmnir App Logo" class="main-logo">
-        <h1>Film<span>nir</span></h1>
-        
-        <div class="promo-banner-glass">
-            <p class="ar">إذا كنت قد سئمت من تطبيقات تطلب مالك أو تغرقك بالإعلانات، فإنك قد وصلت للتطبيق الذي سيغنيك تماماً!</p>
-            <p class="en">If you are tired of apps demanding your money or drowning you in ads, you have finally found the app that replaces them all!</p>
-        </div>
+    <!-- ===================== HERO ===================== -->
+    <header class="hero" id="top">
+        <div class="hero-grid">
 
-        <div class="btn-group">
-            <a href="Filmnir.apk" class="glass-btn btn-neon-red" download="Filmnir.apk">
-                <i class="fa-solid fa-download"></i> تحميل مباشر (Direct APK)
-            </a>
-            <a href="https://t.me/Filmnir" class="glass-btn btn-neon-cyan" target="_blank">
-                <i class="fa-brands fa-telegram"></i> الانضمام للقناة الرسمية
-            </a>
-        </div>
-    </header>
+            <!-- Content -->
+            <div class="hero-content">
+                <div class="hero-badge reveal">
+                    <span class="dot"></span>
+                    مجاني بالكامل • بدون إعلانات
+                </div>
 
-    <!-- Single Frame Image Slider -->
-    <section class="slider-section">
-        <div class="single-frame-container">
-            <button class="slider-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-chevron-right"></i></button>
-            <div class="slide-frame">
-                <img src="shot1.jpg" class="active" alt="Filmnir Screen 1">
-                <img src="shot2.jpg" alt="Filmnir Screen 2">
-                <img src="shot3.jpg" alt="Filmnir Screen 3">
-                <img src="shot4.jpg" alt="Filmnir Screen 4">
+                <h1 class="reveal">
+                    <span class="brand">Filmnir</span>
+                </h1>
+
+                <p class="hero-sub reveal">Live Sports &amp; Movies</p>
+
+                <p class="hero-desc reveal">
+                    إذا كنت قد سئمت من تطبيقات تطلب مالك أو تغرقك بالإعلانات،
+                    فإنك قد وصلت للتطبيق الذي سيغنيك تماماً.
+                </p>
+
+                <p class="hero-desc-en reveal">
+                    If you are tired of apps demanding your money or drowning you in ads,
+                    you have finally found the app that replaces them all.
+                </p>
+
+                <div class="btn-group reveal">
+                    <a href="Filmnir.apk" class="btn btn-primary" download="Filmnir.apk">
+                        <i class="fa-solid fa-download"></i>
+                        <span>تحميل مباشر (APK)</span>
+                    </a>
+                    <a href="https://t.me/Filmnir" target="_blank" rel="noopener" class="btn btn-ghost">
+                        <i class="fa-brands fa-telegram"></i>
+                        <span>الانضمام للقناة</span>
+                    </a>
+                </div>
+
+                <div class="chips reveal">
+                    <span class="chip"><i class="fa-solid fa-bolt"></i> تحديث يومي</span>
+                    <span class="chip"><i class="fa-solid fa-shield-halved"></i> آمن 100%</span>
+                    <span class="chip"><i class="fa-solid fa-closed-captioning"></i> ترجمات متعددة</span>
+                    <span class="chip"><i class="fa-solid fa-mobile-screen"></i> يعمل على Android</span>
+                </div>
             </div>
-            <button class="slider-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-chevron-left"></i></button>
+
+            <!-- Phone + Slider -->
+            <div class="phone-stage reveal">
+                <div class="phone-halo" aria-hidden="true"></div>
+
+                <div class="phone">
+                    <div class="phone-notch" aria-hidden="true"></div>
+
+                    <div class="phone-screen" id="phoneScreen">
+                        <img src="shot1.jpg" class="slide active" alt="Filmnir - واجهة التطبيق 1" loading="eager">
+                        <img src="shot2.jpg" class="slide" alt="Filmnir - واجهة التطبيق 2" loading="lazy">
+                        <img src="shot3.jpg" class="slide" alt="Filmnir - واجهة التطبيق 3" loading="lazy">
+                        <img src="shot4.jpg" class="slide" alt="Filmnir - واجهة التطبيق 4" loading="lazy">
+
+                        <div class="slider-dots" id="sliderDots"></div>
+                    </div>
+                </div>
+
+                <button class="slider-nav prev" id="prevBtn" aria-label="السابق">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button class="slider-nav next" id="nextBtn" aria-label="التالي">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            </div>
+
         </div>
-        <div class="slider-caption">
+
+        <div class="slider-caption reveal">
             <p class="ar">صور من داخل التطبيق</p>
             <p class="en">In-App Screenshots</p>
         </div>
+
+        <!-- Stats -->
+        <div class="stats reveal">
+            <div class="stat">
+                <div class="stat-num"><span class="count" data-target="10">0</span>K<sup>+</sup></div>
+                <div class="stat-label">تحميل</div>
+                <div class="stat-label-en">Downloads</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num"><span class="count" data-target="5000">0</span><sup>+</sup></div>
+                <div class="stat-label">فيلم ومسلسل</div>
+                <div class="stat-label-en">Movies &amp; Shows</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num"><span class="count" data-target="50">0</span><sup>+</sup></div>
+                <div class="stat-label">قناة مباشرة</div>
+                <div class="stat-label-en">Live Channels</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num"><span class="count" data-target="100">0</span>%</div>
+                <div class="stat-label">مجاني</div>
+                <div class="stat-label-en">Free Forever</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== FEATURES ===================== -->
+    <section class="section" id="features">
+        <div class="sec-head reveal">
+            <span class="sec-tag">Features</span>
+            <h2 class="sec-title">لماذا <em>Filmnir</em>؟</h2>
+            <p class="sec-sub">كل ما تحتاجه في تطبيق واحد — أفلام، مسلسلات، وبث مباشر بدون أي تعقيد.</p>
+            <p class="sec-sub-en">Everything you need in one app — movies, series and live streaming, simplified.</p>
+        </div>
+
+        <div class="features">
+            <article class="card tilt reveal">
+                <div class="card-icon"><i class="fa-solid fa-film"></i></div>
+                <h3>مكتبة ضخمة</h3>
+                <p class="ar">آلاف الأفلام والمسلسلات القديمة والحديثة المحدّثة يومياً.</p>
+                <p class="en">Thousands of movies &amp; TV shows updated daily.</p>
+            </article>
+
+            <article class="card tilt reveal">
+                <div class="card-icon"><i class="fa-solid fa-tv"></i></div>
+                <h3>بث مباشر</h3>
+                <p class="ar">قنوات رياضية وبث مباشر ثابت وبدون تقطيع.</p>
+                <p class="en">Stable live streaming for sports channels.</p>
+            </article>
+
+            <article class="card tilt reveal">
+                <div class="card-icon"><i class="fa-solid fa-ban"></i></div>
+                <h3>بدون إعلانات</h3>
+                <p class="ar">تجربة مشاهدة واضحة ومستقرة 100% مجاناً.</p>
+                <p class="en">100% free streaming with no annoying ads.</p>
+            </article>
+
+            <article class="card tilt reveal">
+                <div class="card-icon"><i class="fa-solid fa-globe"></i></div>
+                <h3>لغات متعددة</h3>
+                <p class="ar">يدعم جميع اللغات والترجمات مع خيارات التحميل.</p>
+                <p class="en">Supports all languages &amp; fast offline downloads.</p>
+            </article>
+        </div>
     </section>
 
-    <!-- Features -->
-    <section class="features-container">
-        <div class="glass-card">
-            <div class="feature-icon"><i class="fa-solid fa-film"></i></div>
-            <h3>مكتبة ضخمة / Huge Library</h3>
-            <p class="desc-ar">آلاف الأفلام والمسلسلات القديمة والحديثة المحدثة يومياً.</p>
-            <p class="desc-en">Thousands of movies & TV shows updated daily.</p>
-        </div>
+    <!-- ===================== SPORTS BANNER ===================== -->
+    <section class="section" id="sports" style="padding-top:0;">
+        <div class="sports reveal">
+            <div class="sports-trophy">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
 
-        <div class="glass-card">
-            <div class="feature-icon"><i class="fa-solid fa-tv"></i></div>
-            <h3>بث مباشر / Live Sports</h3>
-            <p class="desc-ar">قنوات رياضية وبث مباشر ثابت وبدون تقطيع.</p>
-            <p class="desc-en">Stable live streaming for sports channels.</p>
-        </div>
+            <h2>البث المباشر للمباريات</h2>
 
-        <div class="glass-card">
-            <div class="feature-icon"><i class="fa-solid fa-ban-smoke"></i></div>
-            <h3>بدون إعلانات / No Ads</h3>
-            <p class="desc-ar">تجربة مشاهدة واضحة ومستقرة 100% مجاناً.</p>
-            <p class="desc-en">100% free streaming with no annoying ads.</p>
-        </div>
+            <p class="ar">
+                شاهد كافة البطولات والدوريات العالمية مع تغطية مباشرة وشاملة
+                لقنوات beIN Sports وقنوات الرياضة المتنوعة.
+            </p>
+            <p class="en">
+                Watch live football matches and international tournaments with high quality live streaming.
+            </p>
 
-        <div class="glass-card">
-            <div class="feature-icon"><i class="fa-solid fa-globe"></i></div>
-            <h3>لغات متعددة / Multi-Language</h3>
-            <p class="desc-ar">يدعم جميع اللغات والترجمات مع خيارات التحميل.</p>
-            <p class="desc-en">Supports all languages & fast offline downloads.</p>
+            <a href="Filmnir.apk" class="btn btn-primary" download="Filmnir.apk">
+                <i class="fa-solid fa-play"></i>
+                <span>حمّل التطبيق الآن</span>
+            </a>
         </div>
     </section>
 
-    <!-- Sports Banner -->
-    <div class="sports-banner-glass">
-        <h2><i class="fa-solid fa-trophy" style="color: var(--gold-neon); text-shadow: 0 0 15px rgba(255,215,0,0.6);"></i> بث المباشر للمباريات | Live Matches</h2>
-        <p class="ar">شاهد كافة البطولات والدوريات العالمية مع تغطية مباشرة وشاملة لقنوات beIN Sports وقنوات الرياضة المتنوعة.</p>
-        <p class="en">Watch live football matches and international tournaments with high quality live streaming.</p>
-        <a href="Filmnir.apk" class="glass-btn btn-neon-red" download="Filmnir.apk" style="margin-top: 15px;">
-            <i class="fa-solid fa-play"></i> حمّل التطبيق الآن | Download Now
-        </a>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <h3 class="footer-title">معلومات التواصل والدعم | Support & Contact</h3>
-        <p class="footer-sub">تواصل مع المطور وانضم إلى مجتمع التطبيق عبر تلجرام</p>
-        
-        <div class="contact-grid">
-            <a href="https://t.me/Filmnir" target="_blank" class="glass-contact-card">
-                <i class="fa-brands fa-telegram"></i>
-                <div class="card-info">
-                    <h4>القناة الرسمية</h4>
-                    <div class="sub-lang">Official Channel</div>
-                    <div class="handle">@Filmnir</div>
-                </div>
-            </a>
-
-            <a href="https://t.me/Abbas_Swadi" target="_blank" class="glass-contact-card">
-                <i class="fa-solid fa-code"></i>
-                <div class="card-info">
-                    <h4>المطور عباس</h4>
-                    <div class="sub-lang">Developer: Abbas</div>
-                    <div class="handle">@Abbas_Swadi</div>
-                </div>
-            </a>
-
-            <a href="https://t.me/FilmnirSupport" target="_blank" class="glass-contact-card">
-                <i class="fa-solid fa-headset"></i>
-                <div class="card-info">
-                    <h4>مجموعة الدعم الفني</h4>
-                    <div class="sub-lang">Support Group</div>
-                    <div class="handle">@FilmnirSupport</div>
-                </div>
-            </a>
+    <!-- ===================== FAQ ===================== -->
+    <section class="section" id="faq">
+        <div class="sec-head reveal">
+            <span class="sec-tag">FAQ</span>
+            <h2 class="sec-title">الأسئلة <em>الشائعة</em></h2>
+            <p class="sec-sub">أجوبة سريعة على أكثر ما يسأل عنه المستخدمون.</p>
+            <p class="sec-sub-en">Quick answers to the most common questions.</p>
         </div>
 
-        <div class="copyright-box">
-            <p class="ar">جميع حقوق الملكية الفكرية والطبع والنشر وحقوق الاسم محفوظة لتطبيق Filmnir © 2026</p>
-            <p class="en">All intellectual property, copyrights, and brand name rights reserved for Filmnir App © 2026. Developed by Abbas.</p>
+        <div class="faq-list">
+            <div class="faq-item reveal">
+                <button class="faq-q" aria-expanded="false">
+                    هل التطبيق مجاني بالكامل؟
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="faq-a">
+                    <p class="ar">نعم، Filmnir مجاني 100% ولا يحتاج أي اشتراك مدفوع أو بطاقة بنكية، وبدون إعلانات مزعجة.</p>
+                    <p class="en">Yes. Filmnir is 100% free — no subscriptions, no credit card, and no annoying ads.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal">
+                <button class="faq-q" aria-expanded="false">
+                    هل يمكنني تحميل الأفلام للمشاهدة بدون إنترنت؟
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="faq-a">
+                    <p class="ar">بالتأكيد، يمكنك تحميل الأفلام والمسلسلات بجودات مختلفة ومشاهدتها لاحقاً بدون اتصال بالإنترنت.</p>
+                    <p class="en">Absolutely. You can download movies and shows in multiple qualities and watch them offline.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal">
+                <button class="faq-q" aria-expanded="false">
+                    كيف أقوم بتحديث التطبيق لآخر إصدار؟
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="faq-a">
+                    <p class="ar">تابع القناة الرسمية على تلجرام @Filmnir، حيث يتم نشر كل إصدار جديد مع رابط تحميل مباشر فور صدوره.</p>
+                    <p class="en">Follow the official Telegram channel @Filmnir — every new release is published there with a direct link.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal">
+                <button class="faq-q" aria-expanded="false">
+                    هل يعمل التطبيق على Android TV؟
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="faq-a">
+                    <p class="ar">التطبيق مصمم للهواتف والأجهزة اللوحية بنظام Android، ويمكن تثبيته على Android TV في معظم الحالات.</p>
+                    <p class="en">The app is built for Android phones and tablets, and can be installed on Android TV in most cases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer id="contact">
+        <div class="footer-inner">
+            <img src="000cf250b13c26cd90f3ba3845f8304c.png" alt="Filmnir" class="footer-logo" width="68" height="68">
+
+            <h3 class="footer-title">معلومات التواصل والدعم</h3>
+            <p class="footer-sub">تواصل مع المطوّر وانضم إلى مجتمع التطبيق عبر تلجرام</p>
+            <p class="footer-sub-en">Support &amp; Contact — Join the community on Telegram</p>
+
+            <div class="contact-grid">
+                <a href="https://t.me/Filmnir" target="_blank" rel="noopener" class="contact-card reveal">
+                    <div class="contact-icon"><i class="fa-brands fa-telegram"></i></div>
+                    <div class="contact-info">
+                        <h4>القناة الرسمية</h4>
+                        <div class="role">Official Channel</div>
+                        <div class="handle">@Filmnir</div>
+                    </div>
+                </a>
+
+                <a href="https://t.me/Abbas_Swadi" target="_blank" rel="noopener" class="contact-card reveal">
+                    <div class="contact-icon"><i class="fa-solid fa-code"></i></div>
+                    <div class="contact-info">
+                        <h4>المطوّر عباس</h4>
+                        <div class="role">Developer</div>
+                        <div class="handle">@Abbas_Swadi</div>
+                    </div>
+                </a>
+
+                <a href="https://t.me/FilmnirSupport" target="_blank" rel="noopener" class="contact-card reveal">
+                    <div class="contact-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div class="contact-info">
+                        <h4>مجموعة الدعم الفني</h4>
+                        <div class="role">Support Group</div>
+                        <div class="handle">@FilmnirSupport</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="copyright">
+                <p class="ar">جميع حقوق الملكية الفكرية والطبع والنشر وحقوق الاسم محفوظة لتطبيق Filmnir © 2026</p>
+                <p class="en">All intellectual property, copyrights, and brand name rights reserved for Filmnir App © 2026.</p>
+                <div class="dev">
+                    <i class="fa-solid fa-heart"></i>
+                    Designed &amp; Developed by Abbas
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Script Slider Toggle -->
+    <!-- Back to top -->
+    <button class="to-top" id="toTop" aria-label="العودة للأعلى">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide-frame img');
+    (function () {
+        'use strict';
 
-        function moveSlide(direction) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + direction + slides.length) % slides.length;
-            slides[currentSlide].classList.add('active');
+        /* ==========================================================
+           1. NAVBAR SCROLL STATE + PROGRESS BAR + BACK TO TOP
+        ========================================================== */
+        const nav = document.getElementById('nav');
+        const progress = document.getElementById('scrollProgress');
+        const toTop = document.getElementById('toTop');
+        let ticking = false;
+
+        function onScroll() {
+            const y = window.scrollY;
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = h > 0 ? (y / h) * 100 : 0;
+
+            progress.style.width = pct + '%';
+            nav.classList.toggle('scrolled', y > 40);
+            toTop.classList.toggle('show', y > 600);
+
+            ticking = false;
         }
-    </script>
 
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(onScroll);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        onScroll();
+
+        toTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        /* ==========================================================
+           2. SLIDER (autoplay + dots + arrows + swipe + pause on hover)
+        ========================================================== */
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const dotsWrap = document.getElementById('sliderDots');
+        const phoneScreen = document.getElementById('phoneScreen');
+        let index = 0;
+        let autoTimer = null;
+
+        // build dots
+        slides.forEach((_, i) => {
+            const b = document.createElement('button');
+            b.className = 'dot' + (i === 0 ? ' active' : '');
+            b.setAttribute('aria-label', 'شريحة ' + (i + 1));
+            b.addEventListener('click', () => goTo(i, true));
+            dotsWrap.appendChild(b);
+        });
+
+        const dots = Array.from(dotsWrap.children);
+
+        function goTo(n, userAction) {
+            slides[index].classList.remove('active');
+            dots[index].classList.remove('active');
+
+            index = (n + slides.length) % slides.length;
+
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+
+            if (userAction) restartAuto();
+        }
+
+        function next() { goTo(index + 1); }
+        function prev() { goTo(index - 1); }
+
+        function startAuto() {
+            stopAuto();
+            autoTimer = setInterval(next, 4500);
+        }
+        function stopAuto() {
+            if (autoTimer) clearInterval(autoTimer);
+            autoTimer = null;
+        }
+        function restartAuto() { startAuto(); }
+
+        document.getElementById('nextBtn').addEventListener('click', () => goTo(index + 1, true));
+        document.getElementById('prevBtn').addEventListener('click', () => goTo(index - 1, true));
+
+        // pause on hover (desktop)
+        const stage = document.querySelector('.phone-stage');
+        stage.addEventListener('mouseenter', stopAuto);
+        stage.addEventListener('mouseleave', startAuto);
+
+        // pause when tab hidden (performance)
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? stopAuto() : startAuto();
+        });
+
+        // touch swipe
+        let touchX = 0, touchY = 0, swiping = false;
+
+        phoneScreen.addEventListener('touchstart', (e) => {
+            const t = e.changedTouches[0];
+            touchX = t.clientX;
+            touchY = t.clientY;
+            swiping = true;
+            stopAuto();
+        }, { passive: true });
+
+        phoneScreen.addEventListener('touchend', (e) => {
+            if (!swiping) return;
+            swiping = false;
+            const t = e.changedTouches[0];
+            const dx = t.clientX - touchX;
+            const dy = t.clientY - touchY;
+
+            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+                // RTL-friendly: swipe right = previous
+                dx > 0 ? prev() : next();
+            }
+            startAuto();
+        }, { passive: true });
+
+        startAuto();
+
+        /* ==========================================================
+           3. SCROLL REVEAL
+        ========================================================== */
+        const revealEls = document.querySelectorAll('.reveal');
+
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+            revealEls.forEach((el, i) => {
+                el.style.transitionDelay = (i % 4) * 70 + 'ms';
+                io.observe(el);
+            });
+        } else {
+            revealEls.forEach((el) => el.classList.add('in'));
+        }
+
+        /* ==========================================================
+           4. COUNTER ANIMATION
+        ========================================================== */
+        const counters = document.querySelectorAll('.count');
+
+        function animateCount(el) {
+            const target = parseFloat(el.dataset.target);
+            const duration = 1600;
+            const start = performance.now();
+
+            function frame(now) {
+                const p = Math.min((now - start) / duration, 1);
+                // easeOutExpo
+                const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+                const val = Math.floor(eased * target);
+                el.textContent = val.toLocaleString('en-US');
+                if (p < 1) requestAnimationFrame(frame);
+                else el.textContent = target.toLocaleString('en-US');
+            }
+            requestAnimationFrame(frame);
+        }
+
+        if ('IntersectionObserver' in window) {
+            const co = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        animateCount(entry.target);
+                        co.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach((c) => co.observe(c));
+        } else {
+            counters.forEach((c) => c.textContent = c.dataset.target);
+        }
+
+        /* ==========================================================
+           5. FAQ ACCORDION
+        ========================================================== */
+        document.querySelectorAll('.faq-item').forEach((item) => {
+            const btn = item.querySelector('.faq-q');
+            btn.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+
+                // close all
+                document.querySelectorAll('.faq-item').forEach((other) => {
+                    other.classList.remove('open');
+                    other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+                });
+
+                if (!isOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        /* ==========================================================
+           6. CARD SPOTLIGHT (mouse tracking)
+        ========================================================== */
+        if (window.matchMedia('(hover: hover)').matches) {
+            document.querySelectorAll('.card').forEach((card) => {
+                card.addEventListener('mousemove', (e) => {
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+                });
+            });
+        }
+
+        /* ==========================================================
+           7. SMOOTH ANCHOR SCROLL (fallback for older browsers)
+        ========================================================== */
+        document.querySelectorAll('a[href^="#"]').forEach((a) => {
+            a.addEventListener('click', (e) => {
+                const id = a.getAttribute('href');
+                if (id === '#' || id.length < 2) return;
+                const target = document.querySelector(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+    })();
+    </script>
 </body>
 </html>
